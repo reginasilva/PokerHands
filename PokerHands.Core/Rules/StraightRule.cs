@@ -1,7 +1,6 @@
 ﻿using PokerHands.Core.Enums;
 using PokerHands.Core.Interfaces;
 using PokerHands.Core.Models;
-using System.Linq;
 
 namespace PokerHands.Core.Rules
 {
@@ -22,10 +21,8 @@ namespace PokerHands.Core.Rules
                  .OrderBy(r => r)
                  .ToList();
 
-            bool isAceLow = ordered.SequenceEqual(new List<Rank>
-            {
-                Rank.Two, Rank.Three, Rank.Four, Rank.Five, Rank.Ace
-            });
+            bool isAceLow = ordered.SequenceEqual([
+                Rank.Two, Rank.Three, Rank.Four, Rank.Five, Rank.Ace ]);
 
             if (isAceLow)
             {

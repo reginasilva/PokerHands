@@ -5,7 +5,7 @@ namespace PokerHands.Core.Utils
 {
     public static class CardParser
     {
-        public static Card Parse(string code)
+        public static Card ParseCard(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
             {
@@ -53,8 +53,5 @@ namespace PokerHands.Core.Utils
                 _ => Rank.Undefined
             };
         }
-
-        public static Hand ParseHand(IEnumerable<string> codes)
-            => new Hand(codes.Select(Parse));
     }
 }

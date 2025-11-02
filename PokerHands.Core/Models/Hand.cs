@@ -9,10 +9,7 @@
 
         public Hand(IEnumerable<Card> cards)
         {
-            if (cards == null)
-            {
-                throw new ArgumentNullException("There is no cards");
-            }
+            ArgumentNullException.ThrowIfNull(cards);
 
             var list = cards.ToList();
 
@@ -27,7 +24,9 @@
         /// <summary>
         /// Gets a value indicating whether all cards in the hand are valid.
         /// </summary>
-        public bool IsValid => Cards.All(c => c.IsValid);
+        public bool IsValid =>
+            Cards.Count == 5 &&
+            Cards.All(c => c.IsValid);
 
         /// <summary>
         /// Returns a string representation of the hand, listing all cards separated by commas.
@@ -48,6 +47,6 @@
             }
 
             return string.Join(", ", Cards.Select(c => c.ToString()));
-        } 
+        }
     }
 }

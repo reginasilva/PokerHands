@@ -1,3 +1,4 @@
+using PokerHands.Core.Interfaces;
 using PokerHands.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,8 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<PokerEvaluatorService>();
-builder.Services.AddScoped<DeckService>();
+builder.Services.AddScoped<IEvaluatorService, PokerEvaluatorService>();
+builder.Services.AddScoped<IDeckService, DeckService>();
 
 var app = builder.Build();
 
@@ -28,3 +29,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

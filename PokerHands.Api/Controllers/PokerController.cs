@@ -1,44 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
+using PokerHands.Api.Models;
 using PokerHands.Core.Exceptions;
 using PokerHands.Core.Interfaces;
-using PokerHands.Core.Models;
-using PokerHands.Core.Services;
 using PokerHands.Core.Utils;
 
-namespace PokerHands.Controllers
+namespace PokerHands.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PokerController : ControllerBase
+    public class PokerController(IEvaluatorService evaluator, IDeckService deck, ILogger<PokerController> logger) : ControllerBase
     {
-        private readonly IEvaluatorService _evaluator;
-        private readonly IDeckService _deck;
-        private readonly ILogger<PokerController> _logger;
-
-        public PokerController(IEvaluatorService evaluator, IDeckService deck, ILogger<PokerController> logger)
-        {
-            _evaluator = evaluator;
-            _deck = deck;
-            _logger = logger;
-        }
-
         /// <summary>
         /// Generates a random poker hand.
         /// </summary>
         [HttpGet("generate")]
         public IActionResult GenerateHand()
         {
-            var hand = _deck.DealHand();
+            var hand = deck.DealHand();
 
-            _logger.LogInformation("Generated new hand: {Cards}", string.Join(", ", hand.Cards));
+            logger.LogInformation("Generated new hand: {Cards}", string.Join(", ", hand.Cards));
 
             return Ok(new
             {
-                Cards = hand.Cards.Select(c => new
-                {
-                    Rank = c.Rank.ToString(),
-                    Suit = c.Suit.ToString()
-                })
+                CardsNames = hand.ToString()
             });
         }
 
@@ -56,10 +40,10 @@ namespace PokerHands.Controllers
 
             try
             {
-                var hand = CardParser.ParseHand(cards);
-                var evaluation = _evaluator.Evaluate(hand);
+                var hand = HandParser.ParseHand(cards);
+                var evaluation = evaluator.Evaluate(hand);
 
-                _logger.LogInformation("Evaluated hand: {Cards} -> {Hand Rank}",
+                logger.LogInformation("Evaluated hand: {Cards} -> {Hand Rank}",
                     string.Join(", ", cards), evaluation.HandRank);
 
                 return Ok(new
@@ -70,13 +54,13 @@ namespace PokerHands.Controllers
             }
             catch (InvalidCardException ex)
             {
-                _logger.LogWarning(ex, "Invalid hand provided: {Cards}", string.Join(", ", cards));
+                logger.LogWarning(ex, "Invalid hand provided: {Cards}", string.Join(", ", cards));
 
                 return BadRequest("The hand contains invalid cards.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error evaluating hand");
+                logger.LogError(ex, "Error evaluating hand");
 
                 return StatusCode(500, "An unexpected error occurred while evaluating the hand.");
             }
@@ -97,13 +81,13 @@ namespace PokerHands.Controllers
 
             try
             {
-                var handA = CardParser.ParseHand(request.Hand1);
-                var handB = CardParser.ParseHand(request.Hand2);
+                var handA = HandParser.ParseHand(request.Hand1);
+                var handB = HandParser.ParseHand(request.Hand2);
 
-                var evalA = _evaluator.Evaluate(handA);
-                var evalB = _evaluator.Evaluate(handB);
+                var evalA = evaluator.Evaluate(handA);
+                var evalB = evaluator.Evaluate(handB);
 
-                int result = _evaluator.CompareHands(handA, handB);
+                int result = evaluator.CompareHands(handA, handB);
 
                 string winner = result switch
                 {
@@ -119,7 +103,7 @@ namespace PokerHands.Controllers
                     _ => $"Both hands are equal ({evalA.HandRank})"
                 };
 
-                _logger.LogInformation(
+                logger.LogInformation(
                     "Compared hands: A={HandA}, B={HandB}, Winner={Winner}",
                     string.Join(", ", request.Hand1),
                     string.Join(", ", request.Hand2),
@@ -136,7 +120,7 @@ namespace PokerHands.Controllers
             }
             catch (InvalidCardException ex)
             {
-                _logger.LogWarning(ex, "Invalid hands provided: A={HandA}, B={HandB}",
+                logger.LogWarning(ex, "Invalid hands provided: A={HandA}, B={HandB}",
                     string.Join(", ", request.Hand1),
                     string.Join(", ", request.Hand2));
              
@@ -144,7 +128,7 @@ namespace PokerHands.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error comparing hands");
+                logger.LogError(ex, "Error comparing hands");
                 
                 return StatusCode(500, "An unexpected error occurred while comparing the hands.");
             }

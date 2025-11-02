@@ -1,9 +1,7 @@
 ﻿namespace PokerHands.Core.Exceptions
 {
-    public class InvalidCardException : Exception
+    public class InvalidCardException(string code) : 
+        Exception($"Invalid card code: {code}")
     {
-        public InvalidCardException(string code) :
-            base($"Invalid card code: {code}")
-        { }
     }
 }

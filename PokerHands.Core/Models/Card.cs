@@ -5,16 +5,10 @@ namespace PokerHands.Core.Models
     /// <summary>
     /// Represents a playing card with a suit and rank. It's immutable.
     /// </summary>
-    public sealed class Card : IComparable<Card>
+    public sealed class Card(Rank rank, Suit suit) : IComparable<Card>
     {
-        public Rank Rank { get; }
-        public Suit Suit { get; }
-
-        public Card(Rank rank, Suit suit)
-        {
-            this.Rank = rank;
-            this.Suit = suit;
-        }
+        public Rank Rank { get; } = rank;
+        public Suit Suit { get; } = suit;
 
         /// <summary>
         /// Gets a value indicating whether the card has a defined rank and suit.

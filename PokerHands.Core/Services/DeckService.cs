@@ -1,9 +1,10 @@
 ﻿using PokerHands.Core.Enums;
+using PokerHands.Core.Interfaces;
 using PokerHands.Core.Models;
 
 namespace PokerHands.Core.Services
 {
-    public class DeckService
+    public class DeckService : IDeckService
     {
         private readonly Random _random = new();
 

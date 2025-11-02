@@ -1,6 +1,95 @@
 @PokerHands_HostAddress = http://localhost:5007
 
-GET {{PokerHands_HostAddress}}/weatherforecast/
-Accept: application/json
+### Generate a random hand
+GET https://localhost:5001/api/poker/generate
 
-###
+
+
+### Evaluate - High Card
+POST https://localhost:5001/api/poker/evaluate
+Content-Type: application/json
+
+["2C", "5D", "8H", "9S", "KC"]
+
+### Evaluate - One Pair
+POST https://localhost:5001/api/poker/evaluate
+Content-Type: application/json
+
+["2C", "2H", "5S", "8D", "9C"]
+
+### Evaluate - Two Pair
+POST https://localhost:5001/api/poker/evaluate
+Content-Type: application/json
+
+["3S", "3H", "9C", "9D", "5H"]
+
+### Evaluate - Three of a Kind
+POST https://localhost:5001/api/poker/evaluate
+Content-Type: application/json
+
+["7C", "7D", "7S", "2H", "9D"]
+
+### Evaluate - Straight
+POST https://localhost:5001/api/poker/evaluate
+Content-Type: application/json
+
+["5C", "6D", "7H", "8S", "9C"]
+
+### Evaluate - Flush
+POST https://localhost:5001/api/poker/evaluate
+Content-Type: application/json
+
+["2H", "5H", "8H", "JH", "KH"]
+
+### Evaluate - Full House
+POST https://localhost:5001/api/poker/evaluate
+Content-Type: application/json
+
+["6S", "6D", "6H", "9C", "9H"]
+
+### Evaluate - Four of a Kind
+POST https://localhost:5001/api/poker/evaluate
+Content-Type: application/json
+
+["9C", "9D", "9H", "9S", "2C"]
+
+### Evaluate - Straight Flush
+POST https://localhost:5001/api/poker/evaluate
+Content-Type: application/json
+
+["5S", "6S", "7S", "8S", "9S"]
+
+### Evaluate - Royal Flush
+POST https://localhost:5001/api/poker/evaluate
+Content-Type: application/json
+
+["10S", "JS", "QS", "KS", "AS"]
+
+
+
+### Compare - Hand A wins
+POST https://localhost:5001/api/poker/compare
+Content-Type: application/json
+
+{
+  "hand1": ["AS", "KS", "QS", "JS", "10S"],
+  "hand2": ["9C", "9D", "9H", "9S", "2C"]
+}
+
+### Compare - Hand B wins
+POST https://localhost:5001/api/poker/compare
+Content-Type: application/json
+
+{
+  "hand1": ["5C", "6D", "7H", "8S", "9C"],
+  "hand2": ["5H", "6H", "7H", "8H", "9H"]
+}
+
+### Compare - Tie
+POST https://localhost:5001/api/poker/compare
+Content-Type: application/json
+
+{
+  "hand1": ["2C", "4D", "6H", "8S", "10C"],
+  "hand2": ["2C", "4D", "6H", "8S", "10C"]
+}

@@ -7,17 +7,15 @@ using PokerHands.Core.Rules;
 
 namespace PokerHands.Core.Services
 {
-    public class PokerEvaluatorService : IEvaluatorService
+    public class PokerEvaluatorService(ILogger<PokerEvaluatorService> logger) : IEvaluatorService
     {
-        private readonly IEnumerable<IHandRule> _rules;
-        private readonly ILogger<PokerEvaluatorService> _logger;
-
-        public PokerEvaluatorService(ILogger<PokerEvaluatorService> logger)
-        {
-            _logger = logger;
-
-            // don't change the order of the rules, as it defines the priority of evaluation
-            _rules =
+        /// <summary>
+        /// Represents the collection of poker hand evaluation rules used to determine the rank of a hand.
+        /// </summary>
+        /// <remarks>
+        /// Don't change the order of the rules, as it defines the priority of evaluation.
+        /// </remarks>
+        private readonly IEnumerable<IHandRule> _rules =
                 [
                     new RoyalFlushRule(),
                     new StraightFlushRule(),
@@ -30,7 +28,6 @@ namespace PokerHands.Core.Services
                     new PairRule(),
                     new HighCardRule()
                 ];
-        }
 
         public int CompareHands(Hand handA, Hand handB)
         {
@@ -59,12 +56,12 @@ namespace PokerHands.Core.Services
         {
             if (!hand.IsValid)
             {
-                _logger.LogError("Invalid hand: {Cards}", string.Join(", ", hand.Cards));
+                logger.LogError("Invalid hand: {Cards}", string.Join(", ", hand.Cards));
 
                 throw new InvalidCardException("Hand contains invalid cards.");
             }
 
-            _logger.LogDebug("Evaluating hand: {Cards}", string.Join(", ", hand.Cards));
+            logger.LogDebug("Evaluating hand: {Cards}", string.Join(", ", hand.Cards));
 
             foreach (var rule in _rules)
             {
@@ -72,13 +69,13 @@ namespace PokerHands.Core.Services
                 {
                     var result = rule.Evaluate(hand);
 
-                    _logger.LogInformation("Matched rule {Rule} -> {Rank}", rule.GetType().Name, result.HandRank);
+                    logger.LogInformation("Matched rule {Rule} -> {Rank}", rule.GetType().Name, result.HandRank);
 
                     return result;
                 }
             }
 
-            _logger.LogWarning("No rule matched hand: {Cards}", string.Join(", ", hand.Cards));
+            logger.LogWarning("No rule matched hand: {Cards}", string.Join(", ", hand.Cards));
 
             return new HandEvaluationResult(HandRank.Undefined, hand.Cards.Select(c => c.Rank));
         }
