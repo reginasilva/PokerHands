@@ -1,187 +1,169 @@
-﻿# PokerHands
+﻿# 🃏 PokerHands
 
-### Generates, classifies, and compares five-card poker hands. - .NET 8.0 Web API
+**Submission:** Game Server Engineer Coding Challenge  
+**Author:** Regina da Silva Lafont  
+**Date:** November 2025  
 
----
-
-## Overview
-
-The application simulates a standard 52-card deck and supports three main operations:
-- Generating random poker hands.
-- Evaluating the strength of a given hand.
-- Comparing two hands and identifying the winner.
-
-It supports all standard poker hand categories, from *High Card* to *Royal Flush*, including proper tiebreaker evaluation.  
-No wild cards or jokers are used.
+![.NET Build & Test](https://github.com/reginasilva/pokerHands/actions/workflows/dotnet.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/Coverage-96%25-brightgreen)
 
 ---
 
-## Run locally
-### Prerequisites
-- Requires .NET 8 SDK.
+## 📘 Overview
 
-### Steps
-- Build:
-  - `dotnet build`
-- Run API:
-  - `dotnet run --project src/AuthorizationGateway.Api/`
+**PokerHands** is a backend application written in **C# (.NET 8)** that generates, evaluates, and compares five-card poker hands from a standard 52-card deck.
 
-## Run in containers
-### Prerequisites
-- Requires Docker.
-
-### Steps
-- Build:
-  - `docker build -t emv-gateway-api .`
-- Run API:
-  - `docker run -d -p 8080:8080 --name emv-gateway emv-gateway-api`
-
-## Tests
-- Run all tests:
-  - `dotnet test`
-
-
-## Architecture
-
-The solution is organized into two projects:
-
-PokerHands/
-├── PokerHands.Core/
-│ ├── Enums/
-│ ├── Interfaces/
-│ ├── Models/
-│ ├── Parsers/
-│ ├── Rules/
-│ └── Services/
-└── PokerHands.Api/
-├── Controllers/
-├── Models/
-└── Program.cs
-
-python
-Copy code
-
-The `Core` project contains all business logic related to card creation, ranking, and evaluation.  
-The `Api` project is responsible for exposing HTTP endpoints, validating input, and returning results in JSON format.
-
-No external dependencies or infrastructure layers were required, as the project is stateless and self-contained.
+The application exposes a REST API with endpoints for generating random hands, evaluating hand ranks, and comparing two hands to determine the winner.
 
 ---
 
-## Core Components
+## 🎯 Features
 
-### DeckService
-Creates a standard 52-card deck, shuffles it, and deals five cards.
-
-### PokerEvaluatorService
-Determines the rank of a hand (e.g., *Flush*, *FullHouse*, *RoyalFlush*).  
-Implements a comparison method that returns:
-- `1` → first hand wins  
-- `0` → tie  
-- `-1` → second hand wins
-
-### CardParser
-Converts string inputs such as `"AS"`, `"10H"`, or `"3D"` into `Card` objects.  
-This ensures that all parsing logic is isolated from domain behavior.
-
-### HandEvaluationResult
-Represents the evaluation result of a hand, including its `HandRank` and numerical tiebreakers.
+- Generates **five-card poker hands** from a full deck (no jokers)  
+- Evaluates hands according to **official poker rules**  
+- Compares two hands and determines the higher-ranked one  
+- Supports all **10 poker hand ranks** (from *Royal Flush* to *High Card*)  
+- Fully tested — 95%+ coverage with unit and integration tests  
+- CI/CD workflow enforcing coverage thresholds via **GitHub Actions**
 
 ---
 
-## API Endpoints
+## 🧩 Architecture
 
-### `GET /api/poker/generate`
-Generates a random poker hand.
+| Layer | Description |
+|--------|-------------|
+| **Core** | Domain layer containing business logic, models, enums, rules, and services. |
+| **API** | Web layer exposing endpoints for generating, evaluating, and comparing hands. |
+| **Tests** | Isolated test projects for Core and API, ensuring full coverage and verifiable quality. |
 
-**Response**
-```json
-{
-  "cards": [
-    { "rank": "Ten", "suit": "Hearts" },
-    { "rank": "Queen", "suit": "Spades" },
-    { "rank": "Ace", "suit": "Clubs" },
-    { "rank": "Three", "suit": "Diamonds" },
-    { "rank": "Seven", "suit": "Hearts" }
-  ]
-}
-POST /api/poker/evaluate
-Evaluates a single hand and returns its classification.
+The system applies the **Open/Closed Principle**, keeping rules isolated via `IHandRule`.  
+New games or evaluation rules can be added without touching existing logic.
 
-Request
+---
 
-json
-Copy code
+## 🧠 Technical Decisions
+
+| Area | Decision | Rationale |
+|-------|-----------|------------|
+| **Language / Framework** | C# + .NET 8 | Modern, stable, high-performance backend stack. |
+| **Business Logic** | 10 distinct rule classes implementing `IHandRule` | Promotes modularity and testability. |
+| **Input Validation** | `Hand` and `Card` constructors enforce validity | Guarantees domain integrity. |
+| **Enums** | `Rank` and `Suit` with `Undefined` fallback | Simplifies parsing and error handling. |
+| **Parsing** | `CardParser` / `HandParser` utilities | Converts text input (`"AS"`) into typed cards. |
+| **Service Layer** | `EvaluatorService` | Orchestrates rules and comparison logic. |
+| **Logging** | `ILogger` interface | Enables observability without tight coupling. |
+| **Testing** | xUnit + FluentAssertions | Readable, maintainable tests. |
+| **CI/CD** | GitHub Actions + XPlat Coverage | Automated quality enforcement. |
+
+---
+
+## ⚙️ Setup & Usage
+
+### 🧱 Requirements
+- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download)
+- Visual Studio / VS Code / Rider (optional)
+
+### 🚀 Run the API
+```bash
+dotnet build
+dotnet run --project PokerHands.Api
+```
+
+###  Open Swagger
+```bash
+https://localhost:5001/swagger
+```
+
+---
+
+### 🔗 Available endpoints
+
+| Method | Route | Description |
+|--------|--------|-------------|
+| `GET` | `/generate` | Returns a random five-card hand |
+| `POST` | `/evaluate` | Evaluates and ranks a poker hand |
+| `POST` | `/compare` | Compares two hands and determines the winner |
+
+---
+
+## 🧪 Run Tests & Coverage
+
+### **Run all tests**
+```bash
+dotnet test --settings coverage.runsettings --collect:"XPlat Code Coverage"
+```
+
+--- 
+
+## 🔄 Continuous Integration
+
+The CI pipeline runs automatically on every push and pull request:
+
+- Builds the solution  
+- Runs all tests  
+- Validates coverage (≥95%)  
+- Uploads `.trx` and `coverage.cobertura.xml` artifacts  
+
+Workflow file: `.github/workflows/dotnet.yml`
+
+---
+
+## 🧱 Example API Calls (`PokerHands.http`)
+
+### **Evaluate a Royal Flush**
+```http
+POST https://localhost:5001/evaluate
+Content-Type: application/json
+
 ["AS", "KS", "QS", "JS", "10S"]
-Response
+```
 
-json
-Copy code
+### **Compare Two Hands**
+```http
+POST https://localhost:5001/compare
+Content-Type: application/json
+
 {
-  "rank": "RoyalFlush",
-  "tiebreakers": ["14"]
+  "handA": ["AS", "KS", "QS", "JS", "10S"],
+  "handB": ["9S", "9D", "9H", "8S", "2C"]
 }
-POST /api/poker/compare
-Compares two poker hands and returns the result.
+```
 
-Request
+## 📊 Quality Metrics
 
-json
-Copy code
-{
-  "hand1": ["AS", "KS", "QS", "JS", "10S"],
-  "hand2": ["9C", "9D", "9H", "9S", "2C"]
-}
-Response
+| Metric | Result |
+|---------|--------|
+| **Unit Test Coverage** | 95%+ |
+| **Build Success Rate** | 100% |
+| **API Integration Tests** | ✅ All endpoints verified |
+| **Rules Coverage** | ✅ 10/10 poker hand ranks tested |
+| **Pipeline Enforcement** | ✅ Coverage threshold integrated |
 
-json
-Copy code
-{
-  "winner": "Hand A",
-  "reason": "Hand A wins: RoyalFlush beats FourOfKind",
-  "handARank": "RoyalFlush",
-  "handBRank": "FourOfKind",
-  "comparison": 1
-}
-Design Decisions
-Separation of responsibilities
-Domain logic remains isolated from API handling. Each component has a single, well-defined responsibility.
+---
 
-Use of standard poker terminology
-The term HandRank was preserved for clarity and consistency with poker theory.
+## 💡 Values Alignment
 
-Stateless and deterministic behavior
-No persistence or random state is stored. Every request is independent and reproducible.
-
-No external dependencies
-Logging relies on ILogger<T> provided by the .NET runtime. No third-party packages were used.
-
-Comparison contract
-The evaluator returns an integer for simplicity and alignment with .NET comparison semantics.
-
-Trade-offs and Future Improvements
-No persistence layer
-The system doesn’t store generated hands or past comparisons.
-Persistence could be added through a minimal infrastructure layer if state tracking were required.
-
-No caching
-Hands are evaluated on demand. Caching could improve performance in a real-time or high-frequency scenario.
-
-Testing scope
-The Core layer is testable, but test projects were omitted for brevity.
-Future iterations could include unit and integration tests covering evaluation accuracy.
+| Value | Reflected In |
+|----------------|--------------|
+| **We boldly go** | Clear, independent technical decisions and willingness to confront ambiguity when defining architecture and trade-offs. |
+| **We stay curious** | Exploration of better design patterns, refactoring of parsers, and constant pursuit of cleaner abstractions. |
+| **We pursue excellence with candor** | Continuous improvement, strict testing discipline, and refusal to accept “good enough” code. |
+| **We make each other better** | Readable, reusable, and teachable codebase designed to help teammates succeed and scale. |
 
 
+---
 
-## Documentation
-Full documentation is available in the **[Project Wiki](../../wiki)**.
+## 👤 Author
 
-The wiki includes:
-- **EMV & TLV Explanation**  
-- **Architecture Overview**  
-- **Security Model**  
-- **API Reference & Examples**  
-- **Testing Strategy**  
-- **Developer Setup (Containers & Local Run)**  
+**Regina da Silva Lafont**  
+Staff Software Engineer 
 
-> Visit the [Wiki Home](../../wiki) to explore all sections.
+[LinkedIn](https://www.linkedin.com/in/reginalafont)
+
+---
+
+## 🏁 Submission
+
+**Repository Tag:** `v1.0-final`  
+**Coverage Threshold:** 95% enforced via CI  
+**Deliverable:** GitHub repository or ZIP file of the full solution
