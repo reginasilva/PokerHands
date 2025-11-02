@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace PokerHands.Api.Tests.Controllers
+namespace PokerHands.Api.Tests.Integration.Controllers
 {
     public class PokerControllerTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -21,7 +21,7 @@ namespace PokerHands.Api.Tests.Controllers
             var content = await response.Content.ReadFromJsonAsync<JsonElement>();
 
             content.TryGetProperty("cardsNames", out var cardsNamesProp).Should().BeTrue();
-            
+
             var cardsNames = cardsNamesProp.GetString();
 
             cardsNames.Should().NotBeNullOrWhiteSpace();
@@ -61,7 +61,7 @@ namespace PokerHands.Api.Tests.Controllers
         [Fact]
         public async Task EvaluateHand_ShouldReturnBadRequest_WhenInvalidCardList()
         {
-            var invalidHand = new[] { "AS", "KS" }; 
+            var invalidHand = new[] { "AS", "KS" };
             var response = await _client.PostAsJsonAsync("/api/poker/evaluate", invalidHand);
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -72,8 +72,8 @@ namespace PokerHands.Api.Tests.Controllers
         {
             var request = new CompareRequest
             {
-                Hand1 = ["AS", "KS", "QS", "JS", "10S"],
-                Hand2 = ["9C", "9D", "9H", "9S", "2C"]
+                HandA = ["AS", "KS", "QS", "JS", "10S"],
+                HandB = ["9C", "9D", "9H", "9S", "2C"]
             };
 
             var response = await _client.PostAsJsonAsync("/api/poker/compare", request);
@@ -92,8 +92,8 @@ namespace PokerHands.Api.Tests.Controllers
         {
             var request = new CompareRequest
             {
-                Hand1 = ["2S", "4D", "6H", "8C", "10S"],
-                Hand2 = ["2S", "4D", "6H", "8C", "10S"]
+                HandA = ["2S", "4D", "6H", "8C", "10S"],
+                HandB = ["2S", "4D", "6H", "8C", "10S"]
             };
 
             var response = await _client.PostAsJsonAsync("/api/poker/compare", request);
@@ -111,8 +111,8 @@ namespace PokerHands.Api.Tests.Controllers
         {
             var request = new CompareRequest
             {
-                Hand1 = ["AS", "KS"],
-                Hand2 = ["9C", "9D", "9H", "9S", "2C"]
+                HandA = ["AS", "KS"],
+                HandB = ["9C", "9D", "9H", "9S", "2C"]
             };
 
             var response = await _client.PostAsJsonAsync("/api/poker/compare", request);

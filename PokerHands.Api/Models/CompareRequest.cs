@@ -8,11 +8,11 @@
         /// <summary>
         /// The first hand, as a list of string representations of cards (e.g., "AS", "10H", "3D", "KC", "7S").
         /// </summary>
-        public List<string> Hand1 { get; set; } = [];
+        public List<string> HandA { get; set; } = [];
 
         /// <summary>
         /// The second hand, as a list of string representations of cards (e.g., "2S", "5H", "9D", "QC", "10S").
         /// </summary>
-        public List<string> Hand2 { get; set; } = [];
+        public List<string> HandB { get; set; } = [];
     }
 }

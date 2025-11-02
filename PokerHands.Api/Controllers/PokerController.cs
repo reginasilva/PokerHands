@@ -73,16 +73,16 @@ namespace PokerHands.Api.Controllers
         public IActionResult CompareHands([FromBody] CompareRequest request)
         {
             if (request == null ||
-                request.Hand1?.Count != 5 ||
-                request.Hand2?.Count != 5)
+                request.HandA?.Count != 5 ||
+                request.HandB?.Count != 5)
             {
                 return BadRequest("Both hands must have exactly 5 cards.");
             }
 
             try
             {
-                var handA = HandParser.ParseHand(request.Hand1);
-                var handB = HandParser.ParseHand(request.Hand2);
+                var handA = HandParser.ParseHand(request.HandA);
+                var handB = HandParser.ParseHand(request.HandB);
 
                 var evalA = evaluator.Evaluate(handA);
                 var evalB = evaluator.Evaluate(handB);
@@ -105,8 +105,8 @@ namespace PokerHands.Api.Controllers
 
                 logger.LogInformation(
                     "Compared hands: A={HandA}, B={HandB}, Winner={Winner}",
-                    string.Join(", ", request.Hand1),
-                    string.Join(", ", request.Hand2),
+                    string.Join(", ", request.HandA),
+                    string.Join(", ", request.HandB),
                     winner);
 
                 return Ok(new
@@ -121,8 +121,8 @@ namespace PokerHands.Api.Controllers
             catch (InvalidCardException ex)
             {
                 logger.LogWarning(ex, "Invalid hands provided: A={HandA}, B={HandB}",
-                    string.Join(", ", request.Hand1),
-                    string.Join(", ", request.Hand2));
+                    string.Join(", ", request.HandA),
+                    string.Join(", ", request.HandB));
              
                 return BadRequest("One or both hands contain invalid cards.");
             }

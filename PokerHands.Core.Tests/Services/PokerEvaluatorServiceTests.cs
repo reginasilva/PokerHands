@@ -90,6 +90,13 @@ public class PokerEvaluatorServiceTests
     }
 
     [Fact]
+    public void Evaluate_ShouldThrow_WhenHandIsNull()
+    {
+        Action act = () => _evaluator.Evaluate(null!);
+        act.Should().Throw<NullReferenceException>();
+    }
+
+    [Fact]
     public void CompareHands_ShouldReturn1_WhenFirstWins()
     {
         var strong = MakeHand("AS", "KS", "QS", "JS", "10S");
