@@ -8,7 +8,6 @@
           <IncludeTestAssembly>false</IncludeTestAssembly>
           <ExcludeByFile>**/Migrations/*.cs</ExcludeByFile>
           <ExcludeByAttribute>GeneratedCodeAttribute</ExcludeByAttribute>
-          <IncludeDirectory>$(SolutionDir)</IncludeDirectory>
         </Configuration>
       </DataCollector>
     </DataCollectors>
@@ -16,19 +15,8 @@
 
   <RunConfiguration>
     <ResultsDirectory>TestResults</ResultsDirectory>
-    <MaxCpuCount>0</MaxCpuCount>
     <TargetFrameworkVersion>net8.0</TargetFrameworkVersion>
-    <CollectSources>true</CollectSources>
-    <CollectCoverage>true</CollectCoverage>
   </RunConfiguration>
-
-  <InProcDataCollectionRunSettings>
-    <InProcDataCollectors>
-      <InProcDataCollector 
-          type="Microsoft.VisualStudio.TraceDataCollector.DataCollector, Microsoft.VisualStudio.TraceDataCollector, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      </InProcDataCollector>
-    </InProcDataCollectors>
-  </InProcDataCollectionRunSettings>
 
   <TestRunParameters>
     <Parameter name="MinCoverageThreshold" value="95" />
